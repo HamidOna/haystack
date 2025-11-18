@@ -15,16 +15,16 @@ const config = {
   favicon: 'img/favicon.ico',
 
   // Set the production url of your site here
-  url: 'https://your-docusaurus-site.example.com',
+  url: 'https://docs.haystack.deepset.ai',
   baseUrl: '/',
 
-  onBrokenLinks: 'warn',
-  onBrokenAnchors: 'warn',
-  onDuplicateRoutes: 'warn',
+  onBrokenLinks: 'throw',
+  onBrokenAnchors: 'throw',
+  onDuplicateRoutes: 'throw',
 
   markdown: {
     hooks: {
-      onBrokenMarkdownLinks: 'warn',
+      onBrokenMarkdownLinks: 'throw',
     },
   },
 
@@ -44,15 +44,16 @@ const config = {
            exclude: ['**/_templates/**'],
           editUrl:
             'https://github.com/deepset-ai/haystack/tree/main/docs-website/',
-          remarkPlugins: [require('./src/remark/versionedReferenceLinks')],
+          // Use beforeDefaultRemarkPlugins to ensure our plugin runs before Webpack processes links
+          beforeDefaultRemarkPlugins: [require('./src/remark/versionedReferenceLinks')],
           versions: {
             current: {
-              label: '2.20-unstable',
+              label: '2.21-unstable',
               path: 'next',
               banner: 'unreleased',
             },
           },
-          lastVersion: '2.19',
+          lastVersion: '2.20',
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
@@ -80,18 +81,19 @@ const config = {
         routeBasePath: 'reference',
         sidebarPath: './reference-sidebars.js',
         editUrl: 'https://github.com/deepset-ai/haystack/tree/main/docs-website/',
-        remarkPlugins: [require('./src/remark/versionedReferenceLinks')],
+        // Use beforeDefaultRemarkPlugins to ensure our plugin runs before Webpack processes links
+        beforeDefaultRemarkPlugins: [require('./src/remark/versionedReferenceLinks')],
         showLastUpdateAuthor: false,
         showLastUpdateTime: false,
         exclude: ['**/_templates/**'],
         versions: {
           current: {
-            label: '2.20-unstable',
+            label: '2.21-unstable',
             path: 'next',
             banner: 'unreleased',
           },
         },
-        lastVersion: '2.19',
+        lastVersion: '2.20',
       },
     ],
   ],
@@ -99,6 +101,11 @@ const config = {
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
+      docs: {
+        sidebar: {
+          autoCollapseCategories: true,
+        },
+      },
       navbar: {
         title: 'Haystack Documentation',
         logo: {
@@ -109,25 +116,35 @@ const config = {
           {
             type: 'docsVersionDropdown',
             position: 'left',
-            dropdownItemsAfter: [
-              {to: '/versions', label: 'Docs versions'},
-              {to: '/reference/versions', label: 'API versions'},
-            ],
             dropdownActiveClassDisabled: true,
+            dropdownItemsAfter: [
+              {
+                type: 'html',
+                value: '<hr style="margin: 0.3rem 0;">',
+              },
+              {
+                href: '/docs/faq#where-can-i-find-tutorials-and-documentation-for-haystack-1x',
+                label: '1.x archived documentation',
+              },
+              {
+                href: '/docs/faq#where-is-the-documentation-for-haystack-217-and-older',
+                label: '2.x archived documentation',
+              },
+            ],
           },
           {
             type: 'doc',
-            docId: 'overview/intro',
+            docId: 'intro',
             label: 'Docs',
             position: 'left',
           },
-            {
-              type: 'doc',
-              docsPluginId: 'reference',
-              docId: 'api-index',
-              label: 'API Reference',
-              position: 'left',
-            },
+          {
+            type: 'doc',
+            docsPluginId: 'reference',
+            docId: 'api-index',
+            label: 'API Reference',
+            position: 'left',
+          },
           {
             href: 'https://github.com/deepset-ai/haystack/tree/main/docs-website',
             label: 'GitHub',
